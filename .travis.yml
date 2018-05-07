@@ -3,3 +3,9 @@ node_js:
 - '8'
 services:
 - mongodb
+notifications:
+  email:
+    recipients:
+      - yuhan9923@gmail.com
+      - lucy.7a11@gmail.com
+    on_success: never
