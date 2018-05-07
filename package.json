@@ -5,13 +5,17 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha --file test/test.js --timeout 6666 --require babel-polyfill --require babel-register --exit && nyc report --reporter=html --reporter=text-lcov | coveralls",
     "server": "cross-env NODE_ENV=development nodemon --exec babel-node server/server.js",
-    "build-server": "cross-env NODE_ENV=production babel -d ./build ./server -s"
+    "build-server": "cross-env NODE_ENV=production babel -d ./build ./server -s",
+    "start":"node ./bin/www"
   },
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "body-parser": "~1.18.2",
+    "connect-mongo": "^2.0.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "express-session": "^1.15.6",
     "mongodb": "^3.0.7",
     "mongoose": "^5.0.17",
     "morgan": "~1.9.0",

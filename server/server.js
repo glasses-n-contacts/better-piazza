@@ -3,6 +3,9 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
 
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -21,6 +24,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+
+
+mongoose.connect('mongodb://127.0.0.1:27017', { useMongoClient: true });
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+
+//handle mongo error
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('Connected to db')
+  // we're connected!
+});
+
+
+//use sessions for tracking logins
+app.use(session({
+  secret: 'anime',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
