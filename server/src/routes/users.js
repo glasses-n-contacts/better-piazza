@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.get('/all/:pageNum?', async function(req, res, next) {
   let pageNum = req.params.pageNum ? req.params.pageNum : 0;
   let users = await Users.paginate(pageNum);
-  res.json(users);
+  res.send({users: users});
 });
 
 
