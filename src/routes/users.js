@@ -9,9 +9,10 @@ router.get('/', function(req, res, next) {
 });
 
 // TODO: Role protect?
-router.get('/all', async function(req, res, next) {
-  const users = await Users.all();
-  res.send(users);
+router.get('/all/:pageNum?', async function(req, res, next) {
+  let pageNum = req.params.pageNum ? req.params.pageNum : 0;
+  let users = await Users.paginate(pageNum);
+  res.json(users);
 });
 
 
@@ -20,21 +21,21 @@ router.post('/login', function(req, res, next) {
     if (err) {
       return next(err);
     }
-    req.session.userId = user._id;
-    // req.session.username = user.username;
-    // req.session.email = user.email;
-    return res.redirect('/');
+    if (req.session) {
+      req.session.userId = user._id;
+    }
+    res.status(200).json({ id: user._id });
   });
 });
 
 router.post('/create', function(req, res, next) {
-  const userData = { email: req.body.email, password: req.body.password, role: parseInt(req.body.role) };
+  const userData = { email: req.body.email, password: req.body.password, role: req.body.role };
   User.create(userData, function(err, user) {
     if (err) {
       console.log(err);
       return next(err);
     }
-    return res.redirect('/');
+    return res.status(200).json({ id: user._id });
   });
 });
 
