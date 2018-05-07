@@ -12,9 +12,35 @@ router.get('/', function(req, res, next) {
 router.get('/all/:pageNum?', async function(req, res, next) {
   let pageNum = req.params.pageNum ? req.params.pageNum : 0;
   let users = await Users.paginate(pageNum);
-  res.send({users: users});
+  res.send({ users: users });
 });
 
+router.get('/user/:id', async function(req, res, next) {
+  let id = req.params.id;
+  let user = await Users.find_by_id(id);
+  console.log('Found user');
+  console.log(user);
+  res.status(200).send(user);
+});
+
+// Update a user
+router.put('/:id', async function(req, res, next) {
+  let id = req.params.id;
+  const updateObject = {};
+  if (req.body.email && req.body.email.length > 0) {
+    updateObject['email'] = req.body.email;
+  };
+  if (req.body.password && req.body.password.length > 0) {
+    updateObject['password'] = req.body.password;
+  };
+  let user = await Users.update_by_id(id, updateObject);
+  res.status(200).send(user);
+});
+
+router.delete('/:id', async function(req, res, next) {
+  await Users.remove_by_id(req.params.id);
+  res.send({ success: true });
+});
 
 router.post('/login', function(req, res, next) {
   User.authenticate(req.body.email, req.body.password, function(err, user) {

@@ -17,7 +17,7 @@
           <td>{{ user.role }}</td>
           <td align="center">
             <router-link v-bind:to="{ name: 'EditUser', params: { id: user._id } }">Edit</router-link> |
-            <a href="#">Delete</a>
+            <a href="#" @click="deleteUser(user._id)">Delete</a>
           </td>
         </tr>
       </table>
@@ -46,6 +46,10 @@ export default {
     async getUsers () {
       const response = await UsersService.fetchUsers()
       this.users = response.data.users
+    },
+    async deleteUser(id) {
+      await UsersService.deleteUser(id)
+      this.$router.push({ name: 'Users' })
     }
   }
 }
