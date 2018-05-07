@@ -24,7 +24,7 @@ router.get('/user/:id', async function(req, res, next) {
 });
 
 // Update a user
-router.put('/:id', async function(req, res, next) {
+router.put('/update/:id', async function(req, res, next) {
   let id = req.params.id;
   const updateObject = {};
   if (req.body.email && req.body.email.length > 0) {
@@ -55,7 +55,8 @@ router.post('/login', function(req, res, next) {
 });
 
 router.post('/create', function(req, res, next) {
-  const userData = { email: req.body.email, password: req.body.password, role: req.body.role };
+  // TODO: attachments, tags
+  let userData = { email: req.body.email, password: req.body.password, role: req.body.role, type: req.body.type };
   User.create(userData, function(err, user) {
     if (err) {
       console.log(err);
@@ -66,3 +67,14 @@ router.post('/create', function(req, res, next) {
 });
 
 module.exports = router;
+
+module.exports.requireLogin = function() {
+  return function(req, res, next) {
+    if (req.session && req.session.userId) {
+      next(); // allow the next route to run
+    } else {
+      // require the user to log in
+      res.status(401).send({ error: 'Not logged in' });
+    }
+  };
+};

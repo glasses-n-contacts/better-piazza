@@ -42,14 +42,10 @@ const PostSchema = new mongoose.Schema({
     enum: ['Note', 'Answer', 'Question'],
     default: 'Note',
   },
-  image: {
-    cdnUri: String,
-    files: [],
-  },
-  attachments: [{
-    type: mongoose.Schema.ObjectId,
-    ref: 'Attachment',
-  }],
+  // attachments: [{
+  //   type: mongoose.Schema.ObjectId,
+  //   ref: 'Attachment',
+  // }],
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', PostSchema);
