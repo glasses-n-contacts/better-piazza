@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
 
 // TODO: Role protect?
 router.get('/all/:pageNum?', async function(req, res, next) {
-  let pageNum = req.params.pageNum ? req.params.pageNum : 0;
+  let pageNum = req.params.pageNum || 0;
   let users = await Users.paginate(pageNum);
   res.send({ users: users });
 });
