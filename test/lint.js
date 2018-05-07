@@ -4,7 +4,7 @@ const lint = require('mocha-eslint');
 // Note: a seperate Mocha test will be run for each path and each file which
 // matches a glob pattern
 const paths = [
-  'server',
+  'src',
   'test',
 ];
 
