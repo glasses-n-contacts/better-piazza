@@ -2,8 +2,12 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const bcrypt = require('bcrypt');
 
+const RoleEnum = {
+  STUDENT: 1,
+  TEACHER: 2,
+};
 
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: false,
@@ -15,34 +19,35 @@ var UserSchema = new mongoose.Schema({
     required: true,
   },
   role: {
-    type: String,
-    default: 'user',
+    type: Number,
+    default: RoleEnum.STUDENT,
     required: true,
   },
   points: {
     type: Number,
     default: 0,
-    required: true
+    required: true,
   },
   point_history: [{
     post: { type: mongoose.Schema.ObjectId, ref: 'Post' },
     point_value: { type: Number },
-    timestamp: { type: Date, default: Date.now }
-  }]
-}, { timestamps: true })
+    timestamp: { type: Date, default: Date.now },
+  }],
+}, { timestamps: true });
 
-//hashing a password before saving it to the database
+// hashing a password before saving it to the database
 UserSchema.pre('save', function(next) {
-  if (this.password && this.password.length > 0) {
-    //console.log('Trying to hash');
-    bcrypt.hash(this.password, 10, function(err, hash) {
+  const user = this;
+  if (user.password && user.password.length > 0) {
+    // console.log('Trying to hash');
+    bcrypt.hash(user.password, 10, function(err, hash) {
       if (err) {
         console.log('Error after save: ' + err);
         return next(err);
       }
-      this.password = hash;
+      user.password = hash;
       console.log('Saved password successfully');
-      next(null, this);
+      next(null, user);
     });
   } else {
     return next(null, user);
@@ -53,7 +58,7 @@ UserSchema.statics.authenticate = function(email, password, callback) {
   User.findOne({ email: email })
     .exec(function(err, user) {
       if (err) {
-        return callback(err)
+        return callback(err);
       } else if (!user) {
         let err = new Error('User not found.');
         err.status = 401;
@@ -61,9 +66,9 @@ UserSchema.statics.authenticate = function(email, password, callback) {
       }
       bcrypt.compare(password, user.password, function(err, result) {
         return callback(err, user);
-      })
+      });
     });
-}
+};
 
-var User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 module.exports = User;

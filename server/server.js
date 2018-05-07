@@ -30,22 +30,22 @@ mongoose.connect('mongodb://127.0.0.1:27017', { useMongoClient: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
-//handle mongo error
+// handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log('Connected to db')
+  console.log('Connected to db');
   // we're connected!
 });
 
 
-//use sessions for tracking logins
+// use sessions for tracking logins
 app.use(session({
   secret: 'anime',
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({
-    mongooseConnection: db
-  })
+    mongooseConnection: db,
+  }),
 }));
 
 
