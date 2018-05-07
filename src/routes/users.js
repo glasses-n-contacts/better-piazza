@@ -74,6 +74,8 @@ module.exports.requireLogin = function() {
       next(); // allow the next route to run
     } else {
       // require the user to log in
+      console.log('Not authorized: ' + req.session);
+      console.log(req.session.userId);
       res.status(401).send({ error: 'Not logged in' });
     }
   };

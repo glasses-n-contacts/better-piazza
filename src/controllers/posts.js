@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 
 module.exports.all = function() {
   return Post.find({}).exec();
@@ -19,3 +20,7 @@ module.exports.update_by_id = function(id, updateObject) {
 module.exports.remove_by_id = function(id) {
   return Post.findOneAndRemove({ _id: id }).exec();
 };
+
+module.exports.posts_for_user = function(userId) {
+  return Post.find({ author: userId }).exec();
+}
