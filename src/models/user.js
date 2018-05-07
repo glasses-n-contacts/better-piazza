@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const bcrypt = require('bcrypt');
 
-const RoleEnum = {
-  STUDENT: 1,
-  TEACHER: 2,
-};
-
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -19,8 +14,9 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   role: {
-    type: Number,
-    default: RoleEnum.STUDENT,
+    type: String,
+    enum: ['Student', 'Teacher'],
+    default: 'Student',
     required: true,
   },
   points: {
