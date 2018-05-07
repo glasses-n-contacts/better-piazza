@@ -47,9 +47,9 @@ router.post('/login', function(req, res, next) {
     if (err) {
       return next(err);
     }
-    if (req.session) {
-      req.session.userId = user._id;
-    }
+    req.session.userId = user._id;
+    req.session.save();
+    console.log('Set session user id:' + req.session.userId);
     res.status(200).json({ id: user._id });
   });
 });
@@ -70,11 +70,12 @@ module.exports = router;
 
 module.exports.requireLogin = function() {
   return function(req, res, next) {
-    if (req.session && req.session.userId) {
+    if (req.session.userId) {
       next(); // allow the next route to run
     } else {
       // require the user to log in
-      console.log('Not authorized: ' + req.session);
+      console.log('Not authorized: ');
+      console.log(req.session);
       console.log(req.session.userId);
       res.status(401).send({ error: 'Not logged in' });
     }
