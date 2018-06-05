@@ -44,7 +44,7 @@ router.post('/create', function(req, res, next) {
   const postData = req.body; // change to specific ones later
   const reqPost = new Post(postData);
   reqPost.save()
-    .then(post => req.json({ post }))
+    .then(post => res.json({ post }))
     .catch(next);
 });
 
