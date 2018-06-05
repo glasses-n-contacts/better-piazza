@@ -10,6 +10,8 @@ const MongoStore = require('connect-mongo')(session);
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const posts = require('./routes/posts');
+const comments = require('./routes/comments');
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/posts', posts);
+app.use('/comments', comments);
 
 mongoose.connect('mongodb://127.0.0.1:27017/test'); // mongodb://heroku_qq11t3t2:tkkrmgbi84neulp6s09711b8ie@ds217350.mlab.com:17350/heroku_qq11t3t2
 mongoose.Promise = global.Promise;

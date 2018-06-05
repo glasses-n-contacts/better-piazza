@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   point_history: [{
-    post: { type: mongoose.Schema.ObjectId, ref: 'Post' },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     point_value: { type: Number },
     timestamp: { type: Date, default: Date.now },
   }],

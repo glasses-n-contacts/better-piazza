@@ -15,7 +15,7 @@ router.get('/all/:pageNum?', async function(req, res, next) {
   res.send({ users: users });
 });
 
-router.get('/user/:id', async function(req, res, next) {
+router.get('/:id', async function(req, res, next) {
   let id = req.params.id;
   let user = await Users.find_by_id(id);
   console.log('Found user');
