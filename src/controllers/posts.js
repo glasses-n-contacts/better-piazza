@@ -19,8 +19,12 @@ module.exports.paginate = function(page, query = {}, perPage = 10) {
   return Post.find(query).limit(perPage).skip(perPage * page).sort({ time: -1 }).exec();
 };
 
+// only allow post body update
 module.exports.update_by_id = function(id, updateObject) {
-  return Post.findOneAndUpdate({ _id: id }, { '$set': updateObject }).exec();
+  const updates = {
+    body: updateObject.body,
+  };
+  return Post.findByIdAndUpdate(id, { $set: updates }).exec();
 };
 
 module.exports.remove_by_id = function(id) {

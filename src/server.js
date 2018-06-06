@@ -64,9 +64,10 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const isTest = process.env.NODE_ENV === 'test';
 
   // if development give the error stack
-  if (isDevelopment) {
+  if (isDevelopment || isTest) {
     console.log(err);
   }
 

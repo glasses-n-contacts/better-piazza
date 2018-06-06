@@ -3,7 +3,7 @@ const router = new express.Router();
 const Post = require('../models/post');
 const Posts = require('../controllers/posts');
 
-/* GET users listing. */
+/* GET posts listing. */
 router.get('/', function(req, res, next) {
   Posts.all()
     .then(posts => res.json({ posts }))
@@ -24,14 +24,13 @@ router.get('/:id', function(req, res, next) {
     .catch(next);
 });
 
-// Update a user
+// Update a post
 router.put('/:id', function(req, res, next) {
   let id = req.params.id;
   const updateObject = req.body; // change to specific updates later
   Posts.update_by_id(id, updateObject)
     .then(post => res.json({ post }))
     .catch(next);
-  res.status(200).send(user);
 });
 
 router.delete('/:id', function(req, res, next) {

@@ -63,7 +63,10 @@ PostSchema.pre('validate', function(next) {
 
   if (this.type === 'Answer') {
     if (!this.question) {
-      throw new Error('Question field missing for answer.');
+      throw new CustomException(422, 'Question field missing for answer.');
+    }
+    if (!this.body) {
+      throw new CustomException(422, 'Answer needs content.');
     }
   }
 

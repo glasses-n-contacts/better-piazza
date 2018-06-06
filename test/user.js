@@ -4,25 +4,36 @@ const User = mongoose.model('User');
 describe('user', () => {
   const users = [...Array(14).keys()];
 
-  users.forEach(function(i) {
-    describe('multiple user creation', () => {
-      beforeEach(() => {
-        return User.deleteMany({}).exec();
-      });
-      it('should successfully create new user ' + i, (done) => {
-        chai.request(server)
-          .post('/users/create')
-          .send({
-            email: 'test' + i + '@gmail.com',
-            password: 'password',
-            role: 'Student',
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('id');
-            done();
+  describe('multiple user creation', () => {
+    beforeEach(() => {
+      return User.deleteMany({}).exec();
+    });
+
+    it('should successfully create new users', (done) => {
+      const userPromises = users.map(i => {
+        return new Promise((resolve, reject) => {
+          chai.request(server)
+            .post('/users/create')
+            .send({
+              email: 'test' + i + '@gmail.com',
+              password: 'password',
+              role: 'Student',
+            })
+            .end((err, res) => {
+              if (err) reject(err);
+              resolve(res);
+            });
           });
       });
+      Promise.all(userPromises)
+        .then(results => {
+          results.forEach(res => {
+            res.should.have.status(200);
+            res.body.should.have.property('id');
+          });
+          done();
+        })
+        .catch(err => done(err));
     });
   });
 
