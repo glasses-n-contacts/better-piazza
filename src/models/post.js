@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+const CustomException = require('../CustomException');
 
 const PostSchema = new mongoose.Schema({
   type: {
@@ -17,7 +18,6 @@ const PostSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
   },
   body: {
     type: String,
@@ -39,7 +39,36 @@ const PostSchema = new mongoose.Schema({
   attachments: [{
     type: String, // filename
   }],
+  question: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+  },
+  // answers to questions
+  answers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+  }],
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
 }, { timestamps: true });
+
+PostSchema.pre('validate', function(next) {
+  if (this.type === 'Question') {
+    if (!this.title) {
+      throw new CustomException(422, 'Question needs a title.');
+    }
+  }
+
+  if (this.type === 'Answer') {
+    if (!this.question) {
+      throw new Error('Question field missing for answer.');
+    }
+  }
+
+  next();
+});
 
 const Post = mongoose.model('Post', PostSchema);
 module.exports = Post;
