@@ -4,10 +4,6 @@ module.exports.find_by_id = function(id) {
   return Comment.findById(id).exec();
 };
 
-module.exports.all = function() {
-  return Comment.find({}).exec();
-};
-
 module.exports.update_by_id = function(id, updateObject) {
   const updates = {
     body: updateObject.body,
