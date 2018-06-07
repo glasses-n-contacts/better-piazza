@@ -5,6 +5,7 @@ const CommentSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
   body: {
     type: String,
@@ -13,6 +14,7 @@ const CommentSchema = new mongoose.Schema({
   post: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post',
+    required: true,
   },
 }, { timestamps: true });
 

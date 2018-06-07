@@ -1,6 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const Comment = require('../models/comment');
+const Post = require('../models/post');
 const Comments = require('../controllers/comments');
 
 router.get('/:id', async function(req, res, next) {
@@ -28,8 +29,21 @@ router.delete('/:id', async function(req, res, next) {
 router.post('/create', function(req, res, next) {
   const commentData = req.body;
   const commentReq = new Comment(commentData);
+  let comment;
   commentReq.save()
-    .then(comment => res.json({ comment }))
+    .then(saved => {
+      comment = saved;
+      return Post.findById(req.body.post).exec();
+    })
+    .then(post => {
+      if (!post.comments.includes(comment._id)) {
+        post.comments.push(comment._id);
+      }
+      return post.save();
+    })
+    .then(() => {
+      res.json({ comment });
+    })
     .catch(next);
 });
 

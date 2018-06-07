@@ -9,7 +9,10 @@ module.exports.all = function() {
 };
 
 module.exports.update_by_id = function(id, updateObject) {
-  return Comment.findOneAndUpdate({ _id: id }, { '$set': updateObject }).exec();
+  const updates = {
+    body: updateObject.body,
+  };
+  return Comment.findOneAndUpdate({ _id: id }, { '$set': updates }).exec();
 };
 
 module.exports.remove_by_id = function(id) {
