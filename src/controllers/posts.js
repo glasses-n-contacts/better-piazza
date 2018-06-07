@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 
 module.exports.find_by_id = function(id) {
   return Post.findById(id).exec();

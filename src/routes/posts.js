@@ -43,7 +43,23 @@ router.post('/create', function(req, res, next) {
   const postData = req.body; // change to specific ones later
   const reqPost = new Post(postData);
   reqPost.save()
-    .then(post => res.json({ post }))
+    .then(post => {
+      if (req.body.type === 'Answer') {
+        Post.findById(req.body.question).exec()
+          .then(question => {
+            if (!question.answers.includes(post._id)) {
+              question.answers.push(post._id);
+              return question.save();
+            } else {
+              return Promise.resolve();
+            }
+          })
+          .then(() => res.json({ post }))
+          .catch(next);
+      } else {
+        res.json({ post });
+      }
+    })
     .catch(next);
 });
 

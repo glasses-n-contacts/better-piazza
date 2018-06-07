@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Post = mongoose.model('Post');
+const Comment = mongoose.model('Comment');
 
 describe('post', () => {
   let lucyId;
@@ -35,6 +36,7 @@ describe('post', () => {
     return Promise.all([
       Post.deleteMany({}).exec(),
       User.deleteMany({}).exec(),
+      Comment.deleteMany({}).exec(),
     ]);
   });
 
@@ -45,6 +47,18 @@ describe('post', () => {
         .end((err, res) => {
           res.should.have.status(200);
           assert.strictEqual(res.body.post.title, 'Question??');
+          done();
+        });
+    });
+  });
+
+  describe('all posts', () => {
+    it('should return all posts', done => {
+      chai.request(server)
+        .get('/posts')
+        .end((err, res) => {
+          res.should.have.status(200);
+          assert.strictEqual(res.body.posts.length, 1);
           done();
         });
     });
@@ -163,7 +177,12 @@ describe('post', () => {
         .end((err, res) => {
           res.should.have.status(200);
           assert.strictEqual(res.body.post.body, 'answer body');
-          done();
+          Post.findById(questionId).exec()
+            .then(question => {
+              assert.strictEqual(question.answers[0].toString(), res.body.post._id);
+              done();
+            })
+            .catch(done);
         });
     });
   });
@@ -183,6 +202,36 @@ describe('post', () => {
               done();
             })
             .catch(done);
+        });
+    });
+  });
+
+  describe('get comments for post', () => {
+    let commentIds = [];
+    before(done => {
+      const commentPromises = [...Array(5).keys()].map(id => {
+        return new Comment({
+          body: id,
+          author: lucyId,
+          post: questionId,
+        }).save();
+      });
+      Promise.all(commentPromises)
+        .then(comments => {
+          commentIds = comments.map(comment => comment._id);
+          return Post.findByIdAndUpdate(questionId, { $set: { comments: commentIds } }).exec();
+        })
+        .then(() => done())
+        .catch(done);
+    });
+
+    it('should return all comments for the post', done => {
+      chai.request(server)
+        .get(`/posts/${questionId}/comments`)
+        .end((err, res) => {
+          res.should.have.status(200);
+          assert.strictEqual(res.body.comments.length, 5);
+          done();
         });
     });
   });
